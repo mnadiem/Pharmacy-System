@@ -58,7 +58,7 @@ public:
     }
 
     //Insert a new first node to the front of the Double Linked List (Function)
-    void InsertFirst(int Barcode, string Name, int Quantity, double Price)        
+    void InsertFirst(int Barcode, string Name, int Quantity, double Price)
     {
         node* newnodeptr = new node;
         newnodeptr->prev = NULL;
@@ -66,43 +66,32 @@ public:
         newnodeptr->name = Name;
         newnodeptr->quantity = Quantity;
         newnodeptr->price = Price;
-        if (IsEmpty())                        
-        {
-            newnodeptr->next = NULL;
-            Header = newnodeptr;
-        }
-        else
-        {
-            newnodeptr->next = Header;
-            Header = newnodeptr;
-        }
+        newnodeptr->next = Header;
+        if (Header != NULL) Header->prev = newnodeptr;
+        Header = newnodeptr;
         Counter++;
     }
 
     //Insert a new last node to the end of the Double Linked List (Function)
-    void InsertLast(int Barcode, string Name, int Quantity, double Price)          
+    void InsertLast(int Barcode, string Name, int Quantity, double Price)
     {
-        if (IsEmpty())     //Check if the the PharmacyClass is empty
+        if (IsEmpty())
         {
             InsertFirst(Barcode, Name, Quantity, Price);
+            return;
         }
-        else
-        {
-            node* newnodeptr = new node;
-            node* lastptr;
-            lastptr = Header;
-            while (lastptr->next != NULL)
-            {
-                lastptr = lastptr->next;
-            }
-            newnodeptr->prev = lastptr;
-            newnodeptr->barcode = Barcode;
-            newnodeptr->name = Name;
-            newnodeptr->quantity = Quantity;
-            newnodeptr->price = Price;
-            newnodeptr->next = NULL;
-            lastptr->next = newnodeptr;
-        }
+
+        node* newnodeptr = new node;
+        node* lastptr = Header;
+        while (lastptr->next != NULL) lastptr = lastptr->next;
+
+        newnodeptr->prev = lastptr;
+        newnodeptr->barcode = Barcode;
+        newnodeptr->name = Name;
+        newnodeptr->quantity = Quantity;
+        newnodeptr->price = Price;
+        newnodeptr->next = NULL;
+        lastptr->next = newnodeptr;
         Counter++;
     }
 
@@ -111,59 +100,54 @@ public:
     {
         if (IsEmpty())
         {
-            InsertFirst(NewBarcode, Name, Quantity, Price);
+            cout << "The list is empty; the new item was not inserted.\\n\\n";
+            return;
         }
-        else
+
+        node* current = Header;
+        while (current != NULL && current->barcode != OldBarcode) current = current->next;
+        if (current == NULL)
         {
-            node* newnodeptr = new node;
-            newnodeptr->barcode = NewBarcode;
-            newnodeptr->name = Name;
-            newnodeptr->quantity = Quantity;
-            newnodeptr->price = Price;
-            node* temp = Header;
-            while (temp != NULL && temp->next->barcode != OldBarcode)
-            {
-                temp = temp->next;
-            }
-            newnodeptr->next = temp->next;
-            temp->next = newnodeptr;
-            newnodeptr->prev = temp;
-            Counter++;
+            cout << "The reference barcode " << OldBarcode << " was not found.\\n\\n";
+            return;
         }
+        if (IsExist(NewBarcode))
+        {
+            cout << "An item with barcode " << NewBarcode << " already exists.\\n\\n";
+            return;
+        }
+
+        node* newnodeptr = new node;
+        newnodeptr->barcode = NewBarcode;
+        newnodeptr->name = Name;
+        newnodeptr->quantity = Quantity;
+        newnodeptr->price = Price;
+        newnodeptr->next = current;
+        newnodeptr->prev = current->prev;
+
+        if (current->prev != NULL) current->prev->next = newnodeptr;
+        else Header = newnodeptr;
+        current->prev = newnodeptr;
+        Counter++;
     }
-    
+
     //Delete a node of the Double Linked List (Function)
     void DeleteItem(int barcode)
     {
-        if (IsExist(barcode == true))
+        node* current = Header;
+        while (current != NULL && current->barcode != barcode) current = current->next;
+        if (current == NULL)
         {
-            if (Header->barcode == barcode)
-            {
-                node* deleteptr = Header;
-                Header = Header->next;
-                delete deleteptr;
-                Header->prev = NULL;
-            }
-            else
-            {
-                node* deleteptr = Header;
-                node* temp = NULL;
-                while (deleteptr->barcode != barcode)
-                {
-                    temp = deleteptr;
-                    deleteptr = deleteptr->next;
-                }
-                temp->next = deleteptr->next;
-                deleteptr->prev = temp;
-                delete deleteptr;
-                Counter--;
-            }
+            cout << "Item is not found.\\n\\n";
+            return;
+        }
 
-        }
-        else
-        {
-            cout << "Item is not found\n\n"; 
-        }
+        if (current->prev != NULL) current->prev->next = current->next;
+        else Header = current->next;
+        if (current->next != NULL) current->next->prev = current->prev;
+
+        delete current;
+        Counter--;
     }
 
     // Modify an item
@@ -187,35 +171,28 @@ public:
     // Auto check the pharmacy inventory
     void AutoCheck()
     {
-        int Validation = 0;
-        int Loading = 0;
-        cout << "Checking the pharmacy inventory\n";
+        bool lowStockFound = false;
+        cout << "Checking the pharmacy inventory\\n";
         node* temp = Header;
-        std::cout << "Please wait ";
-        for (Loading = 0; Loading < 15; Loading++)
+        cout << "Please wait ";
+        for (int loading = 0; loading < 15; loading++)
         {
             cout << ".";
             this_thread::sleep_for(std::chrono::milliseconds(250));
         }
-        cout << endl;   
+        cout << endl;
+
         while (temp != NULL)
         {
             if (temp->quantity <= 15)
             {
-                Validation = 1;
-                cout << "Low stock alert for " << temp->name << ".\n\n";
+                lowStockFound = true;
+                cout << "Low stock alert for " << temp->name << ".\\n\\n";
             }
-            else
-            {
-                Validation = 0;
-            }
-
             temp = temp->next;
         }
-        if (Validation == 0)
-        {
-            cout << "There is no low stock for any items in the pharmacy.\n" << endl;
-        }
+        if (!lowStockFound)
+            cout << "There is no low stock for any items in the pharmacy.\\n" << endl;
     }
 
     // Find the memory location of an item in the pharmacy list
