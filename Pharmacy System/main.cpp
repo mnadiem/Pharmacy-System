@@ -117,38 +117,33 @@ int main()
         {
             if (PharmacyList.IsEmpty())
             {
-                cout << "Pharmacy list is empty ,there are no items to be deleted.\n\n";
-            }
-            else if (PharmacyList.IsExist(barcode) == true)
-            {
-                cout << "Enter the barcode of the item you want to delete: ";
-                cin >> barcode;
-                cout << "Are you sure you want to delete this item? (y/n)\n";
-                cin >> UserChoice;
-                if (UserChoice == 'y' || UserChoice == 'Y')
-                {
-                    PharmacyList.DeleteItem(barcode);
-                    
-                    break;
-                }
-                else if (UserChoice == 'n' || UserChoice == 'N')
-                {
-                    cout << "The item has not been deleted.\n\n";
-                    break;
-                }
-                else
-                {
-                    cout << "Invalid choice.\n" << endl;
-                    break;
-                }
+                cout << "Pharmacy list is empty; there are no items to delete.\n\n";
                 break;
+            }
+
+            cout << "Enter the barcode of the item you want to delete: ";
+            cin >> barcode;
+            if (!PharmacyList.IsExist(barcode))
+            {
+                cout << "\nThe barcode (" << barcode << ") was not found.\n\n";
+                break;
+            }
+
+            cout << "Are you sure you want to delete this item? (y/n)\n";
+            cin >> UserChoice;
+            if (UserChoice == 'y' || UserChoice == 'Y')
+            {
+                PharmacyList.DeleteItem(barcode);
+            }
+            else if (UserChoice == 'n' || UserChoice == 'N')
+            {
+                cout << "The item has not been deleted.\n\n";
             }
             else
             {
-                cout << "\nThe barcode (" << barcode << ") is not found\n" << endl;
-                break;
+                cout << "Invalid choice. The item was not deleted.\n\n";
             }
-            ;break;
+            break;
         }
         break;
         case 3: 
