@@ -100,7 +100,7 @@ public:
     {
         if (IsEmpty())
         {
-            cout << "The list is empty; the new item was not inserted.\\n\\n";
+            cout << "The list is empty; the new item was not inserted.\n\n";
             return;
         }
 
@@ -108,12 +108,12 @@ public:
         while (current != NULL && current->barcode != OldBarcode) current = current->next;
         if (current == NULL)
         {
-            cout << "The reference barcode " << OldBarcode << " was not found.\\n\\n";
+            cout << "The reference barcode " << OldBarcode << " was not found.\n\n";
             return;
         }
         if (IsExist(NewBarcode))
         {
-            cout << "An item with barcode " << NewBarcode << " already exists.\\n\\n";
+            cout << "An item with barcode " << NewBarcode << " already exists.\n\n";
             return;
         }
 
@@ -138,7 +138,7 @@ public:
         while (current != NULL && current->barcode != barcode) current = current->next;
         if (current == NULL)
         {
-            cout << "Item is not found.\\n\\n";
+            cout << "Item is not found.\n\n";
             return;
         }
 
@@ -172,7 +172,7 @@ public:
     void AutoCheck()
     {
         bool lowStockFound = false;
-        cout << "Checking the pharmacy inventory\\n";
+        cout << "Checking the pharmacy inventory\n";
         node* temp = Header;
         cout << "Please wait ";
         for (int loading = 0; loading < 15; loading++)
@@ -187,12 +187,12 @@ public:
             if (temp->quantity <= 15)
             {
                 lowStockFound = true;
-                cout << "Low stock alert for " << temp->name << ".\\n\\n";
+                cout << "Low stock alert for " << temp->name << ".\n\n";
             }
             temp = temp->next;
         }
         if (!lowStockFound)
-            cout << "There is no low stock for any items in the pharmacy.\\n" << endl;
+            cout << "There is no low stock for any items in the pharmacy.\n" << endl;
     }
 
     // Find the memory location of an item in the pharmacy list
